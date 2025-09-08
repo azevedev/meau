@@ -6,10 +6,16 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 
+
+
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    Roboto_400Regular: require('../assets/fonts/Roboto-Regular.ttf'),
+    Roboto_500Medium: require('../assets/fonts/Roboto-Medium.ttf'),
+    Courgette_400Regular: require('../assets/fonts/Courgette-Regular.ttf'),
   });
 
   if (!loaded) {
