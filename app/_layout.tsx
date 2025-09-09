@@ -25,8 +25,13 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
+      <Stack initialRouteName="index">
+        <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="adotar" options={{ headerShown: false }} />
+        <Stack.Screen name="ajudar" options={{ headerShown: false }} />
+        <Stack.Screen name="cadastrar-animal" options={{ headerShown: false }} />
+        <Stack.Screen name="finalizar-processo" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
