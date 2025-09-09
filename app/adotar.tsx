@@ -137,6 +137,9 @@ export default function Adotar() {
               </TouchableOpacity>
             </View>
             <View style={styles.drawerContent}>
+              <TouchableOpacity style={styles.drawerLink} onPress={() => { closeDrawer(); router.push('/'); }}>
+                <Text style={styles.drawerLinkText}>Início</Text>
+              </TouchableOpacity>
               <TouchableOpacity style={styles.drawerLink} onPress={() => { closeDrawer(); router.push('/adotar'); }}>
                 <Text style={styles.drawerLinkText}>Adotar</Text>
               </TouchableOpacity>
