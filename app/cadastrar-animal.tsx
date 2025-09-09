@@ -2,7 +2,8 @@ import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const METRICS = {
   headerHeight: 56,
@@ -17,7 +18,8 @@ const METRICS = {
 export default function CadastrarAnimal() {
   const router = useRouter();
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["bottom", "left", "right", "top"]}>
+      <StatusBar barStyle="dark-content" />
       {/* Header */}
       <View style={[styles.header, { backgroundColor: Colors.VERDE_CLARO }]}>
         <TouchableOpacity
@@ -28,7 +30,7 @@ export default function CadastrarAnimal() {
           <Ionicons name="arrow-back" size={METRICS.backIconSize} color={Colors.PRETO_FONTE} />
         </TouchableOpacity>
 
-        <Text style={[styles.headerTitle, { color: Colors.PRETO_FONTE }]}>Finalizar processo</Text>
+        <Text style={[styles.headerTitle, { color: Colors.PRETO_FONTE }]}>Cadastrar Animal</Text>
 
         <View style={{ width: 40 }} />
       </View>

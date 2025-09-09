@@ -1,9 +1,9 @@
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from "expo-router";
-import { StatusBar } from 'expo-status-bar';
 import React, { useRef, useState } from 'react';
-import { Animated, Dimensions, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Dimensions, Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -67,8 +67,8 @@ export default function Adotar() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" backgroundColor="#f7a800" />
+    <SafeAreaView style={styles.container} edges={["bottom", "left", "right", "top"]}>
+      <StatusBar barStyle="dark-content" />
       {/* Header */}
       <View style={[styles.header, { backgroundColor: Colors.AMARELO_MEDIO }]}>
         <TouchableOpacity

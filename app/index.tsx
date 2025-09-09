@@ -1,6 +1,8 @@
 import { Link } from 'expo-router';
 import React, { useRef, useState } from 'react';
-import { Animated, Dimensions, Image, Pressable, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Dimensions, Image, Pressable, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -42,7 +44,8 @@ export default function Home() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top", "bottom", "left", "right"]}>
+      <StatusBar style="dark" backgroundColor="#f7a800" />
       <View style={styles.header}>
         <TouchableOpacity onPress={openDrawer} style={styles.hamburger} accessibilityRole="button" accessibilityLabel="Abrir menu">
           <View style={styles.bar} />
@@ -58,7 +61,6 @@ export default function Home() {
           <ActionButton label="Adotar" href="/adotar" />
           <ActionButton label="Ajudar" href="/ajudar" />
           <ActionButton label="Cadastrar Animal" href="/cadastrar-animal" />
-          <ActionButton label="Finalizar Processo" href="/finalizar-processo" />
         </View>
       </View>
 
