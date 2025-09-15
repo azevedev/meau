@@ -2,14 +2,19 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 
 const requiredEnv = [
-  'FIREBASE_API_KEY',
-  'FIREBASE_AUTH_DOMAIN',
-  'FIREBASE_PROJECT_ID',
-  'FIREBASE_STORAGE_BUCKET',
-  'FIREBASE_APP_ID',
+  'EXPO_PUBLIC_FIREBASE_API_KEY',
+  'EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN',
+  'EXPO_PUBLIC_FIREBASE_PROJECT_ID',
+  'EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET',
+  'EXPO_PUBLIC_FIREBASE_APP_ID',
 ];
 
+console.log('checking env');
+console.log(process.env);
 for (const key of requiredEnv) {
+    console.log(key);
+console.log(process.env);
+console.log('checking env');
   if (!process.env[key]) {
     // In development, fail fast to surface missing configuration
     throw new Error(`Missing environment variable: ${key}`);
@@ -17,14 +22,14 @@ for (const key of requiredEnv) {
 }
 
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY as string,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN as string,
-  projectId: process.env.FIREBASE_PROJECT_ID as string,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET as string,
-  appId: process.env.FIREBASE_APP_ID as string,
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY as string,
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN as string,
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID as string,
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET as string,
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID as string,
   // Optional values
-  databaseURL: process.env.FIREBASE_DATABASE_URL,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  databaseURL: process.env.EXPO_PUBLIC_FIREBASE_DATABASE_URL,
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
 };
 
 const app = initializeApp(firebaseConfig);
