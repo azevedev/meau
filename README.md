@@ -25,6 +25,23 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
+## Environment Variables
+
+This project reads Firebase configuration from Expo public env variables. Create a `.env` file in the project root with:
+
+```bash
+EXPO_PUBLIC_FIREBASE_API_KEY=...
+EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=...
+EXPO_PUBLIC_FIREBASE_PROJECT_ID=...
+EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=...
+EXPO_PUBLIC_FIREBASE_APP_ID=...
+# Optional
+EXPO_PUBLIC_FIREBASE_DATABASE_URL=...
+EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=...
+```
+
+Expo automatically injects variables prefixed with `EXPO_PUBLIC_` into `process.env` during builds and development.
+
 ## Get a fresh project
 
 When you're ready, run:
