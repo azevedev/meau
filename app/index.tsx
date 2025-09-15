@@ -1,6 +1,7 @@
-import { Link } from 'expo-router';
+import { Link, type Href } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import React, { useRef, useState } from 'react';
-import { Animated, Dimensions, Image, Pressable, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Dimensions, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -27,7 +28,7 @@ export default function Home() {
     }).start(() => setDrawerOpen(false));
   };
 
-  const ActionButton = ({ label, href }: { label: string; href: string }) => (
+  const ActionButton = ({ label, href }: { label: string; href: Href }) => (
     <Link href={href} asChild>
       <TouchableOpacity style={styles.actionButton} activeOpacity={0.8}>
         <Text style={styles.actionButtonText}>{label}</Text>
@@ -35,7 +36,7 @@ export default function Home() {
     </Link>
   );
 
-  const DrawerLink = ({ label, href }: { label: string; href: string }) => (
+  const DrawerLink = ({ label, href }: { label: string; href: Href }) => (
     <Link href={href} asChild>
       <TouchableOpacity style={styles.drawerLink} onPress={closeDrawer}>
         <Text style={styles.drawerLinkText}>{label}</Text>
@@ -65,7 +66,11 @@ export default function Home() {
       </View>
 
       <View style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={styles.login}>login</Text>
+        <Link href="/login" asChild>
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Ir para login">
+            <Text style={styles.login}>login</Text>
+          </TouchableOpacity>
+        </Link>
       </View>
 
       <View style={styles.footer}>
