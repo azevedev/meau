@@ -15,7 +15,6 @@ import FinalizarProcessoScreen from './app/finalizar-processo';
 import HomeScreen from './app/home';
 import IndexScreen from './app/index';
 import LoginScreen from './app/login';
-import SplashScreen from './app/splash';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -36,12 +35,11 @@ export default function App() {
   return (
     <NavigationContainer theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack.Navigator 
-        initialRouteName="splash"
+        initialRouteName="login"
         screenOptions={{
           headerShown: false,
         }}
       >
-        <Stack.Screen name="splash" component={SplashScreen} />
         <Stack.Screen name="index" component={IndexScreen} />
         <Stack.Screen 
           name="home" 
