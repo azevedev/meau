@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, type Auth } from 'firebase/auth';
+import { browserLocalPersistence, getAuth, setPersistence, type Auth } from 'firebase/auth';
 
 const requiredEnv = [
   'EXPO_PUBLIC_FIREBASE_API_KEY',
@@ -9,12 +9,7 @@ const requiredEnv = [
   'EXPO_PUBLIC_FIREBASE_APP_ID',
 ];
 
-console.log('checking env');
-console.log(process.env);
 for (const key of requiredEnv) {
-    console.log(key);
-console.log(process.env);
-console.log('checking env');
   if (!process.env[key]) {
     // In development, fail fast to surface missing configuration
     throw new Error(`Missing environment variable: ${key}`);
@@ -33,6 +28,15 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
 export const auth: Auth = getAuth(app);
+
+setPersistence(auth, browserLocalPersistence)
+  .then(() => {
+    // Persistence set successfully
+  })
+  .catch((error) => {
+    console.error('Error setting persistence:', error);
+  });
 
 

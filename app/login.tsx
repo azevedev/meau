@@ -4,8 +4,8 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from 'expo-router';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useState } from 'react';
+import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
+import { useEffect, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -21,7 +21,18 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [error, setError] = useState('');
+  const [emailLabel, setEmailLabel] = useState(false);
+  const [passwordLabel, setPasswordLabel] = useState(false);
+  // Redirect away if already authenticated
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.replace('/');
+      }
+    });
+    return unsubscribe;
+  }, []);
   const handleLogin = async () => {
     if (!username || !password) {
       Alert.alert('Campos obrigatórios', 'Por favor, preencha nome de usuário e senha.');
@@ -61,7 +72,7 @@ export default function Login() {
             break;
         }
       }
-      Alert.alert('Erro ao entrar', message);
+      setError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -69,7 +80,7 @@ export default function Login() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom", "left", "right"]}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.VERDE_CLARO} />
+      <StatusBar barStyle="dark-content" backgroundColor={"#ff00ff"} />
 
       <View style={[styles.appHeader, { backgroundColor: Colors.VERDE_CLARO }]}>
         <TouchableOpacity style={styles.menuButton} onPress={() => {}} accessibilityLabel="Menu">
@@ -80,42 +91,47 @@ export default function Login() {
       </View>
 
       <KeyboardAvoidingView behavior={Platform.select({ ios: 'padding', android: undefined })} style={styles.content}>
-        <View style={styles.screenIntro}> 
-          <Text style={styles.title}>Bem-vindo de volta</Text>
-          <Text style={styles.subtitle}>Acesse sua conta para continuar</Text>
-        </View>
-
         <View style={styles.form}>
           <View style={styles.fieldGroup}>
-            <Text style={styles.label}>Nome de usuário</Text>
             <TextInput
-              style={styles.input}
-              placeholder="Seu usuário ou e-mail"
-              placeholderTextColor="#9e9e9e"
+              style={
+                [styles.input, { outline: 'transparent', backgroundColor: '#fafafa', borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderRadius: 0}]}
               autoCapitalize="none"
               autoComplete="username"
               keyboardType="default"
               value={username}
-              onChangeText={setUsername}
+              onChangeText={(text) => { setUsername(text); setError(''); }}
               returnKeyType="next"
+              onFocus={(e) => username === '' ? setEmailLabel(true): null}
+              onBlur={(e) => username === '' ? setEmailLabel(false) : null}
             />
+            <Text style={[styles.inputLabel, emailLabel ? styles.labelActive : null]}>
+              E-mail
+            </Text>
           </View>
 
           <View style={styles.fieldGroup}>
-            <Text style={styles.label}>Senha</Text>
             <TextInput
-              style={styles.input}
-              placeholder="Sua senha"
-              placeholderTextColor="#9e9e9e"
+               style={
+                [styles.input, { outline: 'transparent', backgroundColor: '#fafafa', borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderRadius: 0}]}
               autoCapitalize="none"
               secureTextEntry
               value={password}
-              onChangeText={setPassword}
+              onChangeText={(text) => { setPassword(text); setError(''); }}
               returnKeyType="done"
               onSubmitEditing={handleLogin}
+              onFocus={(e) => password === '' ? setPasswordLabel(true): null}
+              onBlur={(e) => password === '' ? setPasswordLabel(false) : null}
             />
+            <Text style={[styles.inputLabel, passwordLabel ? styles.labelActive : null]}>
+              Senha
+            </Text>
           </View>
-
+          {Boolean(error) && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.error}>{error}</Text>
+            </View>
+          )}
           <TouchableOpacity style={[styles.primaryButton, isSubmitting && styles.buttonDisabled]} onPress={handleLogin} activeOpacity={0.8} disabled={isSubmitting}>
             <Text style={styles.primaryButtonText}>{isSubmitting ? 'Entrando...' : 'Entrar'}</Text>
           </TouchableOpacity>
@@ -145,7 +161,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 24,
+    paddingTop: 64,
     gap: 24,
   },
   appHeader: {
@@ -155,7 +171,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: METRICS.headerPaddingH,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#e0e0e0',
-    justifyContent: 'space-between',
   },
   menuButton: {
     width: 40,
@@ -166,7 +181,8 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontFamily: 'Roboto_500Medium',
-    textAlign: 'center',
+    marginLeft: 32,
+
   },
   screenIntro: {
     gap: 4,
@@ -181,10 +197,29 @@ const styles = StyleSheet.create({
     color: '#6f6f6f',
   },
   form: {
-    gap: 16,
+    gap: 20,
   },
   fieldGroup: {
     gap: 6,
+    position: 'relative',
+  },
+  inputLabel: {
+      fontSize: 14,
+      color: '#bdbdbd',
+      fontFamily: 'Robotto500_Regular',
+      position: 'absolute',
+      top: '50%',
+      left: 2,
+      transform: [{ translateY: '-50%' }],
+      transitionProperty: 'all',
+      transitionDuration: '0.15s',
+      transitionTimingFunction: 'ease-in-out',
+      padding: 8,
+  },
+  labelActive: {
+    color: '#202020',
+    top: 2,
+    left: 0,
   },
   label: {
     fontSize: 14,
@@ -202,19 +237,22 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     height: METRICS.buttonHeight,
-    backgroundColor: '#ffd358',
+    backgroundColor: Colors.VERDE_ESCURO,
     borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 8,
+    marginTop: 52,
+    marginBottom: 72,
+    boxShadow: '0 4px 2px 0 rgba(0, 0, 0, 0.25)',
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   primaryButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 12,
     color: '#434343',
+    fontFamily: 'Roboto_500Medium',
+    textTransform: 'uppercase',
   },
   socialWrap: {
     marginTop: 12,
@@ -228,14 +266,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   facebookButton: {
-    backgroundColor: '#1877F2',
+    backgroundColor: '#194f7c',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
   },
   googleButton: {
-    backgroundColor: '#EA4335',
+    backgroundColor: '#f15f5c',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
   },
   socialText: {
     color: '#fff',
     fontSize: 16,
+    textTransform: 'uppercase',
+  },
+  errorContainer: {
+    marginTop: 0,
+  },
+  error: {
+    color: '#ff0000',
+    fontSize: 14,
     fontWeight: '600',
   },
 });

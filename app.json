@@ -33,6 +33,11 @@
       ],
       "expo-web-browser"
     ],
+    "androidStatusBar": {
+      "backgroundColor": "#FF00FF",
+      "barStyle": "dark-content",
+      "translucent": false
+    },
     "experiments": {
       "typedRoutes": true
     }

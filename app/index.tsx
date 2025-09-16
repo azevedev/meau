@@ -1,6 +1,8 @@
+import { auth } from '@/firebaseConfig';
 import { Link, type Href } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useRef, useState } from 'react';
+import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
+import { useRef, useState } from 'react';
 import { Animated, Dimensions, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,6 +11,8 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export default function Home() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  onAuthStateChanged(auth, setCurrentUser);
   const translateX = useRef(new Animated.Value(-screenWidth)).current;
 
   const openDrawer = () => {
@@ -43,6 +47,15 @@ export default function Home() {
       </TouchableOpacity>
     </Link>
   );
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      closeDrawer();
+    } catch (e) {
+      // no-op
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom", "left", "right"]}>
@@ -94,6 +107,11 @@ export default function Home() {
               <DrawerLink label="Adotar" href="/adotar" />
               <DrawerLink label="Ajudar" href="/ajudar" />
               <DrawerLink label="Cadastrar Animal" href="/cadastrar-animal" />
+              {currentUser && (
+                <TouchableOpacity style={styles.drawerLink} onPress={handleLogout} accessibilityRole="button" accessibilityLabel="Sair">
+                  <Text style={styles.drawerLinkText}>Sair</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </Animated.View>
         </View>

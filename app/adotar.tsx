@@ -1,7 +1,9 @@
 import { Colors } from '@/constants/Colors';
+import { auth } from '@/firebaseConfig';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from "expo-router";
-import React, { useRef, useState } from 'react';
+import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
+import { useRef, useState } from 'react';
 import { Animated, Dimensions, Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -43,6 +45,8 @@ const mockAnimals = [
 export default function Adotar() {
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  onAuthStateChanged(auth, setCurrentUser);
   const translateX = useRef(new Animated.Value(-screenWidth)).current;
 
   const openDrawer = () => {
@@ -64,6 +68,15 @@ export default function Adotar() {
 
   const handleCardPress = (animalId: number) => {
     router.push('/finalizar-processo');
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      closeDrawer();
+    } catch (e) {
+      // no-op
+    }
   };
 
   return (
@@ -149,6 +162,11 @@ export default function Adotar() {
               <TouchableOpacity style={styles.drawerLink} onPress={() => { closeDrawer(); router.push('/cadastrar-animal'); }}>
                 <Text style={styles.drawerLinkText}>Cadastrar Animal</Text>
               </TouchableOpacity>
+              {currentUser && (
+                <TouchableOpacity style={styles.drawerLink} onPress={handleLogout} accessibilityLabel="Sair">
+                  <Text style={styles.drawerLinkText}>Sair</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </Animated.View>
         </View>
