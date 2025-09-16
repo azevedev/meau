@@ -1,12 +1,14 @@
 import { Colors } from '@/constants/Colors';
 import { auth } from '@/firebaseConfig';
+import type { RootStackParamList } from '@/types/navigation';
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import type { NavigationProp } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
-import { useEffect, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Alert, Animated, KeyboardAvoidingView, Platform, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const METRICS = {
@@ -24,13 +26,54 @@ export default function Login() {
   const [error, setError] = useState('');
   const [emailLabel, setEmailLabel] = useState(false);
   const [passwordLabel, setPasswordLabel] = useState(false);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  
+  // Animated values for label transitions
+  const emailLabelAnimation = useRef(new Animated.Value(0)).current;
+  const passwordLabelAnimation = useRef(new Animated.Value(0)).current;
+  
+  // Animation helper functions
+  const animateLabel = (animation: Animated.Value, toValue: number) => {
+    Animated.timing(animation, {
+      toValue,
+      duration: 150,
+      useNativeDriver: false, // We need to animate layout properties
+    }).start();
+  };
+  
+  const handleEmailFocus = () => {
+    if (username === '') {
+      setEmailLabel(true);
+      animateLabel(emailLabelAnimation, 1);
+    }
+  };
+  
+  const handleEmailBlur = () => {
+    if (username === '') {
+      setEmailLabel(false);
+      animateLabel(emailLabelAnimation, 0);
+    }
+  };
+  
+  const handlePasswordFocus = () => {
+    if (password === '') {
+      setPasswordLabel(true);
+      animateLabel(passwordLabelAnimation, 1);
+    }
+  };
+  
+  const handlePasswordBlur = () => {
+    if (password === '') {
+      setPasswordLabel(false);
+      animateLabel(passwordLabelAnimation, 0);
+    }
+  };
   
   // Redirect away if already authenticated
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        navigation.replace('home');
+        navigation.navigate('home');
       }
     });
     return unsubscribe;
@@ -46,7 +89,7 @@ export default function Login() {
       const response = await signInWithEmailAndPassword(auth, username.trim(), password);
       console.log('response!!');
       console.log(response);
-      navigation.replace('home');
+      navigation.navigate('home');
     } catch (error: any) {
       console.log('error!!');
       console.log(error);
@@ -104,12 +147,29 @@ export default function Login() {
               value={username}
               onChangeText={(text) => { setUsername(text); setError(''); }}
               returnKeyType="next"
-              onFocus={(e) => username === '' ? setEmailLabel(true): null}
-              onBlur={(e) => username === '' ? setEmailLabel(false) : null}
+              onFocus={handleEmailFocus}
+              onBlur={handleEmailBlur}
             />
-            <Text style={[styles.inputLabel, emailLabel ? styles.labelActive : null]}>
+            <Animated.Text style={[
+              styles.inputLabel, 
+              emailLabel ? styles.labelActive : null,
+              {
+                top: emailLabelAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [10, -20], // 22 is approximately 50% of 44px input height
+                }),
+                left: emailLabelAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [2, 0],
+                }),
+                color: emailLabelAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ['#bdbdbd', '#202020'],
+                }),
+              }
+            ]}>
               E-mail
-            </Text>
+            </Animated.Text>
           </View>
 
           <View style={styles.fieldGroup}>
@@ -122,12 +182,29 @@ export default function Login() {
               onChangeText={(text) => { setPassword(text); setError(''); }}
               returnKeyType="done"
               onSubmitEditing={handleLogin}
-              onFocus={(e) => password === '' ? setPasswordLabel(true): null}
-              onBlur={(e) => password === '' ? setPasswordLabel(false) : null}
+              onFocus={handlePasswordFocus}
+              onBlur={handlePasswordBlur}
             />
-            <Text style={[styles.inputLabel, passwordLabel ? styles.labelActive : null]}>
+            <Animated.Text style={[
+              styles.inputLabel, 
+              passwordLabel ? styles.labelActive : null,
+              {
+                top: passwordLabelAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [10, -20], // 22 is approximately 50% of 44px input height
+                }),
+                left: passwordLabelAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [2, 0],
+                }),
+                color: passwordLabelAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ['#bdbdbd', '#202020'],
+                }),
+              }
+            ]}>
               Senha
-            </Text>
+            </Animated.Text>
           </View>
           {Boolean(error) && (
             <View style={styles.errorContainer}>
@@ -210,12 +287,6 @@ const styles = StyleSheet.create({
       color: '#bdbdbd',
       fontFamily: 'Robotto500_Regular',
       position: 'absolute',
-      top: '50%',
-      left: 2,
-      transform: [{ translateY: '-50%' }],
-      transitionProperty: 'all',
-      transitionDuration: '0.15s',
-      transitionTimingFunction: 'ease-in-out',
       padding: 8,
   },
   labelActive: {
