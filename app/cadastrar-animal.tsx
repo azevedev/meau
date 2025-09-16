@@ -1,8 +1,9 @@
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import {
+  Image,
   Platform,
   StatusBar,
   StyleSheet,
@@ -10,7 +11,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { pickImage, renderCheck } from "./cadastrar-pessoa";
 
 type ModoCadastroAnimal = "ajuda" | "apadrinhar" | "adocao";
 
@@ -29,10 +32,23 @@ type ModeSelectionButtonsProps = {
   onModeSelection: (mode: ModoCadastroAnimal) => void;
 };
 
-const ModeSelectionButtons = ({
+function FormInputLabel({ children }: { children: ReactNode }) {
+  return (
+    <Text
+      style={[
+        styles.sectionTitle,
+        { marginTop: 18, fontFamily: "Roboto_500Medium" },
+      ]}
+    >
+      {children}
+    </Text>
+  );
+}
+
+function ModeSelectionButtons({
   currentMode,
   onModeSelection,
-}: ModeSelectionButtonsProps) => {
+}: ModeSelectionButtonsProps) {
   const ModeButton = ({
     mode,
     label,
@@ -59,11 +75,46 @@ const ModeSelectionButtons = ({
       <ModeButton mode="ajuda" label="AJUDA" />
     </View>
   );
+}
+
+type FormInputTextProps = {
+  value: string;
+  placeholder?: string;
+  onValueChange: (newValue: string) => void;
+  validateFunction?: () => boolean;
+  secureTextEntry?: boolean;
 };
+
+function FormInputText({
+  value,
+  placeholder = "",
+  onValueChange,
+  validateFunction,
+  secureTextEntry,
+}: FormInputTextProps) {
+  return (
+    <View style={styles.row}>
+      <TextInput
+        style={[styles.input, { fontFamily: "Roboto_400Regular" }]}
+        placeholder={placeholder}
+        value={value}
+        onChangeText={onValueChange}
+        autoCapitalize="none"
+        secureTextEntry={secureTextEntry}
+      />
+      {validateFunction && (
+        <View style={styles.iconWrap}>{renderCheck(validateFunction())}</View>
+      )}
+    </View>
+  );
+}
 
 export default function CadastrarAnimal() {
   const navigation = useNavigation();
   const [mode, setMode] = useState<ModoCadastroAnimal>("adocao");
+  const [petName, setPetName] = useState<string>("");
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
+
   return (
     <SafeAreaView
       style={styles.container}
@@ -93,6 +144,32 @@ export default function CadastrarAnimal() {
       <View style={styles.center}>
         <Text style={styles.title}>Cadastrar Animal</Text>
         <ModeSelectionButtons currentMode={mode} onModeSelection={setMode} />
+        <FormInputLabel>NOME DO ANIMAL</FormInputLabel>
+        <FormInputText value={petName} onValueChange={setPetName} />
+        <FormInputLabel>FOTOS DO ANIMAL</FormInputLabel>
+        <TouchableOpacity
+          style={styles.photoBox}
+          onPress={() => {
+            pickImage().then((img) => img && setPhotoUri(img));
+          }}
+        >
+          {photoUri ? (
+            <Image source={{ uri: photoUri }} style={styles.photo} />
+          ) : (
+            <View style={styles.photoPlaceholder}>
+              <Ionicons
+                name="add-circle-outline"
+                size={40}
+                color={Colors.VERDE_ESCURO}
+              />
+              <Text
+                style={[styles.photoText, { fontFamily: "Roboto_400Regular" }]}
+              >
+                adicionar foto
+              </Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -169,5 +246,55 @@ const styles = StyleSheet.create({
         boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
       },
     }),
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    paddingVertical: 6,
+    color: Colors.PRETO_FONTE,
+  },
+  sectionTitle: {
+    color: Colors.VERDE_ESCURO,
+    fontSize: 13,
+    marginBottom: 8,
+    fontWeight: "600",
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e6e6e6",
+    paddingVertical: 12,
+    marginBottom: 8,
+  },
+  iconWrap: { width: 32, alignItems: "center", justifyContent: "center" },
+  photoBox: {
+    alignSelf: "center",
+    marginTop: 8,
+    marginBottom: 18,
+    width: 128,
+    height: 128,
+    backgroundColor: "#F3F3F3",
+    borderRadius: 6,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 1,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  photo: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 6,
+    resizeMode: "cover",
+  },
+  photoPlaceholder: { justifyContent: "center", alignItems: "center" },
+  photoText: {
+    marginTop: 6,
+    color: Colors.VERDE_ESCURO,
+    textTransform: "lowercase",
+    fontSize: 13,
   },
 });

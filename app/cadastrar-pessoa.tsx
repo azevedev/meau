@@ -1,7 +1,11 @@
 // app/cadastro-pessoal.tsx
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
-import { DrawerActions, StackActions, useNavigation } from "@react-navigation/native";
+import {
+  DrawerActions,
+  StackActions,
+  useNavigation,
+} from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
@@ -20,6 +24,37 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const HEADER_HEIGHT = 56;
+
+export function renderCheck(valid: boolean) {
+  return valid ? (
+    <Ionicons name="checkmark" size={18} color={Colors.VERDE_ESCURO} />
+  ) : null;
+}
+
+// pick image (new API)
+export async function pickImage() {
+  try {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+
+    if (result.canceled) return;
+
+    const asset = result.assets && result.assets[0];
+    if (asset && asset.uri) {
+      return asset.uri;
+    } else {
+      console.warn("ImagePicker retornou sem assets/uri:", result);
+      Alert.alert("Erro", "Não foi possível obter a imagem selecionada.");
+    }
+  } catch (err) {
+    console.error("Erro ao abrir galeria:", err);
+    Alert.alert("Erro", "Não foi possível abrir a galeria.");
+  }
+}
 
 export default function CadastroPessoal() {
   const navigation = useNavigation();
@@ -40,38 +75,17 @@ export default function CadastroPessoal() {
   useEffect(() => {
     (async () => {
       if (Platform.OS !== "web") {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== "granted") {
-          Alert.alert("Permissão necessária", "Precisamos de permissão para acessar a galeria.");
+          Alert.alert(
+            "Permissão necessária",
+            "Precisamos de permissão para acessar a galeria."
+          );
         }
       }
     })();
   }, []);
-
-  // pick image (new API)
-  async function pickImage() {
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.7,
-      });
-
-      if (result.canceled) return;
-
-      const asset = result.assets && result.assets[0];
-      if (asset && asset.uri) {
-        setPhotoUri(asset.uri);
-      } else {
-        console.warn("ImagePicker retornou sem assets/uri:", result);
-        Alert.alert("Erro", "Não foi possível obter a imagem selecionada.");
-      }
-    } catch (err) {
-      console.error("Erro ao abrir galeria:", err);
-      Alert.alert("Erro", "Não foi possível abrir a galeria.");
-    }
-  }
 
   // === Ajuste: usar navigation do React Navigation ===
   function openLeftAction() {
@@ -117,7 +131,8 @@ export default function CadastroPessoal() {
   const validTelefone = isPhone(telefone);
   const validUsername = isRequired(username);
   const validPassword = isPasswordValid(password);
-  const validConfirm = password === confirmPassword && confirmPassword.length > 0;
+  const validConfirm =
+    password === confirmPassword && confirmPassword.length > 0;
 
   const formValid =
     validFullName &&
@@ -131,13 +146,12 @@ export default function CadastroPessoal() {
     validPassword &&
     validConfirm;
 
-  function renderCheck(valid: boolean) {
-    return valid ? <Ionicons name="checkmark" size={18} color={Colors.VERDE_ESCURO} /> : null;
-  }
-
   function onSubmit() {
     if (!formValid) {
-      Alert.alert("Formulário incompleto", "Preencha corretamente todos os campos marcados.");
+      Alert.alert(
+        "Formulário incompleto",
+        "Preencha corretamente todos os campos marcados."
+      );
       return;
     }
     const payload = {
@@ -162,14 +176,20 @@ export default function CadastroPessoal() {
       {/* HEADER */}
       <View style={[styles.header, { backgroundColor: Colors.VERDE_CLARO }]}>
         <TouchableOpacity onPress={openLeftAction} style={styles.headerIcon}>
-          {typeof navigation.canGoBack === "function" && navigation.canGoBack() ? (
+          {typeof navigation.canGoBack === "function" &&
+          navigation.canGoBack() ? (
             <Ionicons name="arrow-back" size={24} color={Colors.PRETO_FONTE} />
           ) : (
             <Ionicons name="menu" size={26} color={Colors.PRETO_FONTE} />
           )}
         </TouchableOpacity>
 
-        <Text style={[styles.headerTitle, { color: Colors.PRETO_FONTE, fontFamily: "Roboto_500Medium" }]}>
+        <Text
+          style={[
+            styles.headerTitle,
+            { color: Colors.PRETO_FONTE, fontFamily: "Roboto_500Medium" },
+          ]}
+        >
           Cadastro Pessoal
         </Text>
 
@@ -184,13 +204,20 @@ export default function CadastroPessoal() {
       >
         <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.infoBox}>
-            <Text style={[styles.infoText, { fontFamily: "Roboto_400Regular" }]}>
-              As informações preenchidas serão divulgadas apenas para a pessoa com a qual você
-              realizar o processo de adoção e/ou apadrinhamento, após a formalização do processo.
+            <Text
+              style={[styles.infoText, { fontFamily: "Roboto_400Regular" }]}
+            >
+              As informações preenchidas serão divulgadas apenas para a pessoa
+              com a qual você realizar o processo de adoção e/ou apadrinhamento,
+              após a formalização do processo.
             </Text>
           </View>
 
-          <Text style={[styles.sectionTitle, { fontFamily: "Roboto_500Medium" }]}>INFORMAÇÕES PESSOAIS</Text>
+          <Text
+            style={[styles.sectionTitle, { fontFamily: "Roboto_500Medium" }]}
+          >
+            INFORMAÇÕES PESSOAIS
+          </Text>
 
           <View style={styles.row}>
             <TextInput
@@ -267,7 +294,12 @@ export default function CadastroPessoal() {
             <View style={styles.iconWrap}>{renderCheck(validTelefone)}</View>
           </View>
 
-          <Text style={[styles.sectionTitle, { marginTop: 18, fontFamily: "Roboto_500Medium" }]}>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { marginTop: 18, fontFamily: "Roboto_500Medium" },
+            ]}
+          >
             INFORMAÇÕES DE PERFIL
           </Text>
 
@@ -306,17 +338,38 @@ export default function CadastroPessoal() {
             <View style={styles.iconWrap}>{renderCheck(validConfirm)}</View>
           </View>
 
-          <Text style={[styles.sectionTitle, { marginTop: 18, fontFamily: "Roboto_500Medium" }]}>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { marginTop: 18, fontFamily: "Roboto_500Medium" },
+            ]}
+          >
             FOTO DE PERFIL
           </Text>
 
-          <TouchableOpacity style={styles.photoBox} onPress={pickImage}>
+          <TouchableOpacity
+            style={styles.photoBox}
+            onPress={() => {
+              pickImage().then((img) => img && setPhotoUri(img));
+            }}
+          >
             {photoUri ? (
               <Image source={{ uri: photoUri }} style={styles.photo} />
             ) : (
               <View style={styles.photoPlaceholder}>
-                <Ionicons name="add-circle-outline" size={40} color={Colors.VERDE_ESCURO} />
-                <Text style={[styles.photoText, { fontFamily: "Roboto_400Regular" }]}>adicionar foto</Text>
+                <Ionicons
+                  name="add-circle-outline"
+                  size={40}
+                  color={Colors.VERDE_ESCURO}
+                />
+                <Text
+                  style={[
+                    styles.photoText,
+                    { fontFamily: "Roboto_400Regular" },
+                  ]}
+                >
+                  adicionar foto
+                </Text>
               </View>
             )}
           </TouchableOpacity>
@@ -326,7 +379,11 @@ export default function CadastroPessoal() {
             onPress={onSubmit}
             disabled={!formValid}
           >
-            <Text style={[styles.submitText, { fontFamily: "Roboto_500Medium" }]}>FAZER CADASTRO</Text>
+            <Text
+              style={[styles.submitText, { fontFamily: "Roboto_500Medium" }]}
+            >
+              FAZER CADASTRO
+            </Text>
           </TouchableOpacity>
 
           <View style={{ height: 48 }} />
@@ -350,7 +407,11 @@ const styles = StyleSheet.create({
   headerIcon: { width: 40, alignItems: "flex-start", justifyContent: "center" },
   headerTitle: { fontSize: 20, textAlign: "center" },
 
-  container: { padding: 16, paddingBottom: 24, backgroundColor: Colors.BRANCO_FUNDO },
+  container: {
+    padding: 16,
+    paddingBottom: 24,
+    backgroundColor: Colors.BRANCO_FUNDO,
+  },
   infoBox: {
     backgroundColor: "#E6F3F0",
     borderRadius: 6,
@@ -359,9 +420,19 @@ const styles = StyleSheet.create({
     borderWidth: 0.8,
     borderColor: "#cfe9e5",
   },
-  infoText: { color: "#2b6360", textAlign: "center", fontSize: 14, lineHeight: 20 },
+  infoText: {
+    color: "#2b6360",
+    textAlign: "center",
+    fontSize: 14,
+    lineHeight: 20,
+  },
 
-  sectionTitle: { color: Colors.VERDE_ESCURO, fontSize: 13, marginBottom: 8, fontWeight: "600" },
+  sectionTitle: {
+    color: Colors.VERDE_ESCURO,
+    fontSize: 13,
+    marginBottom: 8,
+    fontWeight: "600",
+  },
 
   row: {
     flexDirection: "row",
@@ -371,7 +442,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     marginBottom: 8,
   },
-  input: { flex: 1, fontSize: 16, paddingVertical: 6, color: Colors.PRETO_FONTE },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    paddingVertical: 6,
+    color: Colors.PRETO_FONTE,
+  },
 
   iconWrap: { width: 32, alignItems: "center", justifyContent: "center" },
 
@@ -392,8 +468,18 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
   },
   photoPlaceholder: { justifyContent: "center", alignItems: "center" },
-  photoText: { marginTop: 6, color: Colors.VERDE_ESCURO, textTransform: "lowercase", fontSize: 13 },
-  photo: { width: "100%", height: "100%", borderRadius: 6, resizeMode: "cover" },
+  photoText: {
+    marginTop: 6,
+    color: Colors.VERDE_ESCURO,
+    textTransform: "lowercase",
+    fontSize: 13,
+  },
+  photo: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 6,
+    resizeMode: "cover",
+  },
 
   submitBtn: {
     backgroundColor: Colors.VERDE_ESCURO,
@@ -404,5 +490,9 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   submitBtnDisabled: { opacity: 0.5, backgroundColor: "#C9E0DA" },
-  submitText: { color: Colors.PRETO_FONTE, fontWeight: "700", letterSpacing: 0.4 },
+  submitText: {
+    color: Colors.PRETO_FONTE,
+    fontWeight: "700",
+    letterSpacing: 0.4,
+  },
 });
