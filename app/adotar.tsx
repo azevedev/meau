@@ -74,6 +74,7 @@ export default function Adotar() {
     try {
       await signOut(auth);
       closeDrawer();
+      router.replace('/login');
     } catch (e) {
       // no-op
     }

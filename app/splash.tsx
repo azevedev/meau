@@ -7,11 +7,8 @@ import { Image, StyleSheet, View } from 'react-native';
 export default function Splash() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        router.replace('/');
-      } else {
-        router.replace('/login');
-      }
+      const target = user ? '/' : '/login';
+      setTimeout(() => router.replace(target), 1500);
     });
     return unsubscribe;
   }, []);

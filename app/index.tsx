@@ -1,5 +1,5 @@
 import { auth } from '@/firebaseConfig';
-import { Link, type Href } from 'expo-router';
+import { Link, router, type Href } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
 import { useRef, useState } from 'react';
@@ -52,6 +52,7 @@ export default function Home() {
     try {
       await signOut(auth);
       closeDrawer();
+      router.replace('/login');
     } catch (e) {
       // no-op
     }
