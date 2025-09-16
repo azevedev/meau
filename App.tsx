@@ -3,14 +3,15 @@ import { DarkTheme, DefaultTheme, NavigationContainer } from '@react-navigation/
 import { createStackNavigator } from '@react-navigation/stack';
 import { useFonts } from 'expo-font';
 import 'react-native-reanimated';
-import './types/navigation';
 import { RootStackParamList } from './types/navigation';
+
 
 // Import screens
 import NotFoundScreen from './app/+not-found';
 import AdotarScreen from './app/adotar';
 import AjudarScreen from './app/ajudar';
 import CadastrarAnimalScreen from './app/cadastrar-animal';
+import CadastrarPessoaScreen from './app/cadastrar-pessoa';
 import FinalizarProcessoScreen from './app/finalizar-processo';
 import HomeScreen from './app/home';
 import IndexScreen from './app/index';
@@ -56,6 +57,7 @@ export default function App() {
         <Stack.Screen name="adotar" component={AdotarScreen} />
         <Stack.Screen name="ajudar" component={AjudarScreen} />
         <Stack.Screen name="cadastrar-animal" component={CadastrarAnimalScreen} />
+        <Stack.Screen name="cadastrar-pessoa" component={CadastrarPessoaScreen} />
         <Stack.Screen name="finalizar-processo" component={FinalizarProcessoScreen} />
         <Stack.Screen name="+not-found" component={NotFoundScreen} />
       </Stack.Navigator>

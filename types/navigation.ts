@@ -5,6 +5,7 @@ export type RootStackParamList = {
   adotar: undefined;
   ajudar: undefined;
   'cadastrar-animal': undefined;
+  'cadastrar-pessoa': undefined;
   'finalizar-processo': undefined;
   '+not-found': undefined;
 };

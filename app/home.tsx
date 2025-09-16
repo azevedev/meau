@@ -7,9 +7,9 @@ import { useRef, useState } from 'react';
 import { Animated, Dimensions, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { RootStackParamList } from '../types/navigation';
 
-type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'home'>;
-
 import { SafeAreaView } from "react-native-safe-area-context";
+
+type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'home'>;
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -87,6 +87,7 @@ export default function Home() {
           <ActionButton label="Adotar" screenName="adotar" />
           <ActionButton label="Ajudar" screenName="ajudar" />
           <ActionButton label="Cadastrar Animal" screenName="cadastrar-animal" />
+          <ActionButton label="Cadastrar Pessoa" screenName="cadastrar-pessoa" />
         </View>
       </View>
 
@@ -121,6 +122,7 @@ export default function Home() {
               <DrawerLink label="Adotar" screenName="adotar" />
               <DrawerLink label="Ajudar" screenName="ajudar" />
               <DrawerLink label="Cadastrar Animal" screenName="cadastrar-animal" />
+              <DrawerLink label="Cadastrar Pessoa" screenName="cadastrar-pessoa" />
               {currentUser && (
                 <TouchableOpacity style={styles.drawerLink} onPress={handleLogout} accessibilityRole="button" accessibilityLabel="Sair">
                   <Text style={styles.drawerLinkText}>Sair</Text>
