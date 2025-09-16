@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Colors';
 import { auth } from '@/firebaseConfig';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from "expo-router";
+import { useNavigation } from '@react-navigation/native';
 import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
 import { useRef, useState } from 'react';
 import { Animated, Dimensions, Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -43,7 +43,7 @@ const mockAnimals = [
 
 
 export default function Adotar() {
-  const router = useRouter();
+  const navigation = useNavigation();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   onAuthStateChanged(auth, setCurrentUser);
@@ -67,14 +67,14 @@ export default function Adotar() {
   };
 
   const handleCardPress = (animalId: number) => {
-    router.push('/finalizar-processo');
+    navigation.navigate('finalizar-processo' as never);
   };
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
       closeDrawer();
-      router.replace('/login');
+      navigation.replace('login');
     } catch (e) {
       // no-op
     }
@@ -151,16 +151,16 @@ export default function Adotar() {
               </TouchableOpacity>
             </View>
             <View style={styles.drawerContent}>
-              <TouchableOpacity style={styles.drawerLink} onPress={() => { closeDrawer(); router.push('/'); }}>
+              <TouchableOpacity style={styles.drawerLink} onPress={() => { closeDrawer(); navigation.navigate('home' as never); }}>
                 <Text style={styles.drawerLinkText}>Início</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.drawerLink} onPress={() => { closeDrawer(); router.push('/adotar'); }}>
+              <TouchableOpacity style={styles.drawerLink} onPress={() => { closeDrawer(); navigation.navigate('adotar' as never); }}>
                 <Text style={styles.drawerLinkText}>Adotar</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.drawerLink} onPress={() => { closeDrawer(); router.push('/ajudar'); }}>
+              <TouchableOpacity style={styles.drawerLink} onPress={() => { closeDrawer(); navigation.navigate('ajudar' as never); }}>
                 <Text style={styles.drawerLinkText}>Ajudar</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.drawerLink} onPress={() => { closeDrawer(); router.push('/cadastrar-animal'); }}>
+              <TouchableOpacity style={styles.drawerLink} onPress={() => { closeDrawer(); navigation.navigate('cadastrar-animal' as never); }}>
                 <Text style={styles.drawerLinkText}>Cadastrar Animal</Text>
               </TouchableOpacity>
               {currentUser && (

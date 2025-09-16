@@ -1,18 +1,17 @@
 // app/finalizar-processo.tsx
 import { Colors } from '@/constants/Colors';
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useRouter } from "expo-router";
-import React from "react";
+import { useNavigation } from '@react-navigation/native';
 import {
-  Alert,
-  Dimensions,
-  Platform,
-  Share,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Alert,
+    Dimensions,
+    Platform,
+    Share,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -29,7 +28,7 @@ const METRICS = {
 };
 
 export default function FinalizarProcesso() {
-  const router = useRouter();
+  const navigation = useNavigation();
 
   async function onShare() {
     try {
@@ -52,7 +51,7 @@ export default function FinalizarProcesso() {
       <View style={[styles.header, { backgroundColor: Colors.VERDE_CLARO }]}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => router.back()}
+          onPress={() => navigation.goBack()}
           accessibilityLabel="Voltar"
         >
           <Ionicons name="arrow-back" size={METRICS.backIconSize} color={Colors.PRETO_FONTE} />

@@ -1,7 +1,6 @@
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import React from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -16,7 +15,7 @@ const METRICS = {
 };
 
 export default function CadastrarAnimal() {
-  const router = useRouter();
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right", "top"]}>
       <StatusBar barStyle="dark-content" />
@@ -24,7 +23,7 @@ export default function CadastrarAnimal() {
       <View style={[styles.header, { backgroundColor: Colors.VERDE_CLARO }]}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => router.back()}
+          onPress={() => navigation.goBack()}
           accessibilityLabel="Voltar"
         >
           <Ionicons name="arrow-back" size={METRICS.backIconSize} color={Colors.PRETO_FONTE} />

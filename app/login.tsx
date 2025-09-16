@@ -3,7 +3,7 @@ import { auth } from '@/firebaseConfig';
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { router } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -24,15 +24,17 @@ export default function Login() {
   const [error, setError] = useState('');
   const [emailLabel, setEmailLabel] = useState(false);
   const [passwordLabel, setPasswordLabel] = useState(false);
+  const navigation = useNavigation();
+  
   // Redirect away if already authenticated
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        router.replace('/');
+        navigation.replace('home');
       }
     });
     return unsubscribe;
-  }, []);
+  }, [navigation]);
   const handleLogin = async () => {
     if (!username || !password) {
       Alert.alert('Campos obrigatórios', 'Por favor, preencha nome de usuário e senha.');
@@ -44,7 +46,7 @@ export default function Login() {
       const response = await signInWithEmailAndPassword(auth, username.trim(), password);
       console.log('response!!');
       console.log(response);
-      router.replace('/');
+      navigation.replace('home');
     } catch (error: any) {
       console.log('error!!');
       console.log(error);

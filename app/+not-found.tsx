@@ -1,20 +1,22 @@
-import { Link, Stack } from 'expo-router';
-import { StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
 export default function NotFoundScreen() {
+  const navigation = useNavigation();
+  
   return (
-    <>
-      <Stack.Screen options={{ title: 'Opa!' }} />
-      <ThemedView style={styles.container}>
-        <ThemedText type="title">Parece que esta tela não existe...</ThemedText>
-        <Link href="/" style={styles.link}>
-          <ThemedText type="link">Ir para a tela inicial!</ThemedText>
-        </Link>
-      </ThemedView>
-    </>
+    <ThemedView style={styles.container}>
+      <ThemedText type="title">Parece que esta tela não existe...</ThemedText>
+      <TouchableOpacity 
+        style={styles.link}
+        onPress={() => navigation.navigate('home' as never)}
+      >
+        <ThemedText type="link">Ir para a tela inicial!</ThemedText>
+      </TouchableOpacity>
+    </ThemedView>
   );
 }
 
