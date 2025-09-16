@@ -1,3 +1,4 @@
+import Hamburger from '@/components/Hamburger';
 import { auth } from '@/firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -73,11 +74,7 @@ export default function Home() {
     <SafeAreaView style={styles.container} edges={["top", "bottom", "left", "right"]}>
       <StatusBar style="dark" backgroundColor="#f7a800" />
       <View style={styles.header}>
-        <TouchableOpacity onPress={openDrawer} style={styles.hamburger} accessibilityRole="button" accessibilityLabel="Abrir menu">
-          <View style={styles.bar} />
-          <View style={[styles.bar]} />
-          <View style={styles.bar} />
-        </TouchableOpacity>
+        <Hamburger onPress={openDrawer} />
       </View>
 
       <View style={styles.main}>
@@ -143,23 +140,9 @@ const styles = StyleSheet.create({
     gap: 56,
   },
   header: {
-    height: 50,
     justifyContent: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-  },
-  hamburger: {
-    width: 24,
-    height: 24,
-    justifyContent: 'space-around',
-  },
-  bar: {
-    height: 3,
-    backgroundColor: '#88c9bf',
-    borderRadius: 2,
-  },
-  barMiddle: {
-    width: '85%',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
   },
   main: {
     flex: 1,

@@ -1,9 +1,9 @@
+import Hamburger from '@/components/Hamburger';
 import { Colors } from '@/constants/Colors';
 import { auth } from '@/firebaseConfig';
 import type { RootStackParamList } from '@/types/navigation';
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import type { NavigationProp } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
@@ -128,9 +128,7 @@ export default function Login() {
       <StatusBar barStyle="dark-content" backgroundColor={"#ff00ff"} />
 
       <View style={[styles.appHeader, { backgroundColor: Colors.VERDE_CLARO }]}>
-        <TouchableOpacity style={styles.menuButton} onPress={() => {}} accessibilityLabel="Menu">
-          <Ionicons name="menu" size={METRICS.backIconSize} color={Colors.PRETO_FONTE} />
-        </TouchableOpacity>
+        <Hamburger onPress={() => {}} color={Colors.PRETO_FONTE} />
         <Text style={[styles.headerTitle, { color: Colors.PRETO_FONTE }]}>Entrar</Text>
         <View style={{ width: 40 }} />
       </View>

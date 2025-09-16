@@ -1,3 +1,4 @@
+import Hamburger from '@/components/Hamburger';
 import { Colors } from '@/constants/Colors';
 import { auth } from '@/firebaseConfig';
 import { Ionicons } from '@expo/vector-icons';
@@ -85,17 +86,7 @@ export default function Adotar() {
       <StatusBar barStyle="dark-content" />
       {/* Header */}
       <View style={[styles.header, { backgroundColor: Colors.AMARELO_MEDIO }]}>
-        <TouchableOpacity
-          style={styles.hamburger}
-          onPress={openDrawer}
-          accessibilityLabel="Abrir menu"
-        >
-          <View style={styles.bar} />
-          <View style={styles.bar} />
-          <View style={styles.bar} />
-        </TouchableOpacity>
-
-
+        <Hamburger onPress={openDrawer} color="#111" />
         <TouchableOpacity style={styles.searchButton} accessibilityLabel="Buscar">
           <Ionicons name="search" size={METRICS.backIconSize} color={Colors.PRETO_FONTE} />
         </TouchableOpacity>
@@ -186,19 +177,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: "#e0e0e0",
     justifyContent: "space-between",
-  },
-  hamburger: {
-    width: 24,
-    height: 24,
-    justifyContent: 'space-between',
-  },
-  bar: {
-    height: 3,
-    backgroundColor: '#111',
-    borderRadius: 2,
-  },
-  barMiddle: {
-    width: '85%',
   },
   headerTitle: {
     fontSize: 20,
