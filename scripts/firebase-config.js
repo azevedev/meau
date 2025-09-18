@@ -11,8 +11,13 @@ import {
   SAMLAuthProvider,
   signInWithCredential,
 } from "firebase/auth";
-import { getReactNativePersistence } from "firebase/auth/react-native";
-import React, { useEffect, useState } from "react";
+// import { getReactNativePersistence } from "firebase/auth/react-native";
+import { getReactNativePersistence } from "firebase/auth";
+
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+
+import { useEffect, useState } from "react";
 import { Button, LogBox, StyleSheet, Text, View } from "react-native";
 
 // Add Firebase configuration here: https://firebase.google.com/docs/web/learn-more#config-object
@@ -41,6 +46,10 @@ if (!getApps().length) {
 } else {
   auth = getAuth();
 }
+
+const storage = getStorage();
+const firestore = getFirestore();
+export { auth, firestore, storage };
 
 // Firebase sets some timers for a long period, which will trigger some warnings. Let's turn that off for this example
 LogBox.ignoreLogs([`Setting a timer for a long period`]);

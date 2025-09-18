@@ -23,6 +23,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { auth } from "@/scripts/firebase-config";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+
 const HEADER_HEIGHT = 56;
 
 export function renderCheck(valid: boolean) {
@@ -146,28 +149,86 @@ export default function CadastroPessoal() {
     validPassword &&
     validConfirm;
 
-  function onSubmit() {
-    if (!formValid) {
-      Alert.alert(
-        "Formulário incompleto",
-        "Preencha corretamente todos os campos marcados."
-      );
-      return;
+// async function uploadImageAsync(uri: string, pathPrefix = "profile_photos") {
+//   // converte URI local em blob e faz upload
+//   const response = await fetch(uri);
+//   const blob = await response.blob();
+
+//   const filename = `${Date.now()}`; // ou `${uid}.jpg`
+//   const ref = storageRef(storage, `${pathPrefix}/${filename}`);
+//   await uploadBytes(ref, blob);
+//   const url = await getDownloadURL(ref);
+//   return url;
+// }
+
+
+async function handleRegister() {
+  // mantém sua checagem de validação anterior
+  // if (!formValid) {
+  //   Alert.alert("Formulário incompleto", "Preencha corretamente todos os campos marcados.");
+  //   return;
+  // }
+
+  try {
+    // opcional: show loading UI
+    // cria usuário no Firebase Auth
+    const cred = await createUserWithEmailAndPassword(auth, email.trim(), password);
+    const user = cred.user;
+
+    // um jeito de fazer upload da foto, mudar para conversão em base 64 para dar menos trabalho
+    let photoURL = null;
+    // if (photoUri) {
+    //   try {
+    //     // photoURL = await uploadImageAsync(photoUri, "profile_photos");
+    //   } catch (err) {
+    //     console.warn("Upload da foto falhou, prosseguindo sem foto:", err);
+    //     photoURL = null;
+    //   }
+    // }
+
+    // atualiza displayName/photoURL no Auth
+    // await updateProfile(user, {
+    //   displayName: fullName,
+    //   photoURL: photoURL ?? undefined,
+    // });
+
+    // grava dados adicionais no Firestore em users/{uid}
+    // const userDoc = {
+    //   uid: user.uid,
+    //   fullName,
+    //   age,
+    //   email: email.trim(),
+    //   estado,
+    //   cidade,
+    //   endereco,
+    //   telefone,
+    //   username,
+    //   photoURL: photoURL ?? null,
+    //   createdAt: serverTimestamp(),
+    // };
+    //TODO
+    // Ajustar para salvar os outros dados dos usuário
+    // await setDoc(doc(firestore, "users", user.uid), userDoc);
+
+    Alert.alert("Cadastro realizado", "Usuário criado com sucesso!");
+    
+  } catch (error: any) {
+    console.error("Erro registro:", error);
+    const code = error?.code ?? "";
+    if (code.includes("auth/email-already-in-use")) {
+      Alert.alert("Erro", "O e-mail já está em uso.");
+    } else if (code.includes("auth/invalid-email")) {
+      Alert.alert("Erro", "E-mail inválido.");
+    } else if (code.includes("auth/weak-password")) {
+      Alert.alert("Erro", "Senha muito fraca. Use ao menos 6 caracteres.");
+    } else {
+      Alert.alert("Erro", "Não foi possível criar o usuário. Tente novamente.");
     }
-    const payload = {
-      fullName,
-      age,
-      email,
-      estado,
-      cidade,
-      endereco,
-      telefone,
-      username,
-      photoUri,
-    };
-    console.log("Payload cadastro:", payload);
-    Alert.alert("Sucesso", "Cadastro submetido (exemplo).");
+  } finally {
+    // esconder loading se tiver
   }
+}
+
 
   return (
     <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
@@ -375,9 +436,10 @@ export default function CadastroPessoal() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.submitBtn, !formValid && styles.submitBtnDisabled]}
-            onPress={onSubmit}
-            disabled={!formValid}
+            // style={[styles.submitBtn, !formValid && styles.submitBtnDisabled]}
+            style={[styles.submitBtn]}
+            onPress={handleRegister}
+            // disabled={!formValid}
           >
             <Text
               style={[styles.submitText, { fontFamily: "Roboto_500Medium" }]}
