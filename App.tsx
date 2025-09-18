@@ -36,7 +36,7 @@ export default function App() {
   return (
     <NavigationContainer theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack.Navigator 
-        initialRouteName="login"
+        initialRouteName="home"
         screenOptions={{
           headerShown: false,
         }}

@@ -9,7 +9,7 @@ export default function Index() {
   const navigation = useNavigation<IndexScreenNavigationProp>();
 
   useEffect(() => {
-    navigation.replace('login');
+    navigation.replace('cadastrar-pessoa');
   }, [navigation]);
 
   return null;

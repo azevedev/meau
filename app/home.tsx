@@ -5,10 +5,9 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
 import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
 import { useRef, useState } from 'react';
-import { Animated, Dimensions, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { RootStackParamList } from '../types/navigation';
-
+import { Alert, Animated, Dimensions, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
+import { RootStackParamList } from '../types/navigation';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'home'>;
 
@@ -38,11 +37,45 @@ export default function Home() {
     }).start(() => setDrawerOpen(false));
   };
 
+
+// dentro do componente Home, após `const navigation = useNavigation<...>();`
+
+  const navigateIfAuthenticated = (
+    screenName: keyof RootStackParamList,
+    opts?: { confirmMessage?: string; loginButtonLabel?: string; cancelButtonLabel?: string }
+  ) => {
+    const { confirmMessage = 'Você precisa estar logado para acessar esta funcionalidade.', loginButtonLabel = 'Entrar', cancelButtonLabel = 'Cancelar' } = opts ?? {};
+    const isLoggedIn = Boolean(auth.currentUser);
+
+    if (isLoggedIn) {
+      navigation.navigate(screenName);
+      return;
+    }
+
+    // não está logado -> apenas mostra alerta; navegação só se o usuário escolher Entrar
+    Alert.alert(
+      'Acesso restrito',
+      confirmMessage,
+      [
+        {
+          text: cancelButtonLabel,
+          style: 'cancel',
+        },
+        {
+          text: loginButtonLabel,
+          onPress: () => navigation.navigate('login'),
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+
   const ActionButton = ({ label, screenName }: { label: string; screenName: keyof RootStackParamList }) => (
     <TouchableOpacity 
       style={styles.actionButton} 
       activeOpacity={0.8}
-      onPress={() => navigation.navigate(screenName)}
+      onPress={() => navigateIfAuthenticated(screenName)}
     >
       <Text style={styles.actionButtonText}>{label}</Text>
     </TouchableOpacity>
@@ -53,7 +86,7 @@ export default function Home() {
       style={styles.drawerLink} 
       onPress={() => {
         closeDrawer();
-        navigation.navigate(screenName);
+        setTimeout(() => navigateIfAuthenticated(screenName), 120);
       }}
     >
       <Text style={styles.drawerLinkText}>{label}</Text>
@@ -84,7 +117,15 @@ export default function Home() {
           <ActionButton label="Adotar" screenName="adotar" />
           <ActionButton label="Ajudar" screenName="ajudar" />
           <ActionButton label="Cadastrar Animal" screenName="cadastrar-animal" />
-          <ActionButton label="Cadastrar Pessoa" screenName="cadastrar-pessoa" />
+
+          {/* Cadastrar Pessoa: acesso aberto (sem checagem) */}
+          <TouchableOpacity
+            style={styles.actionButton}
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate('cadastrar-pessoa')}
+          >
+            <Text style={styles.actionButtonText}>Cadastrar Pessoa</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
