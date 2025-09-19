@@ -111,7 +111,7 @@ export default function Home() {
       </View>
 
       <View style={styles.main}>
-        <Text style={styles.greeting}>Olá!</Text>
+        <Text style={styles.greeting}>Olá!!!</Text>
 
         <View style={styles.actions}>
           <ActionButton label="Adotar" screenName="adotar" />
